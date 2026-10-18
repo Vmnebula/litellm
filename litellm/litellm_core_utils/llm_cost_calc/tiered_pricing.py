@@ -44,8 +44,10 @@ def select_tier_for_input(
     if not tiered_pricing or input_tokens <= 0:
         return None
 
-    sorted_tiers: Final = sorted(tiered_pricing, key=lambda t: t.get("range", [0, 0])[0])
-    valid_tiers: Final = [tier for tier in sorted_tiers if len(tier.get("range", [])) == 2]
+    valid_tiers: Final = sorted(
+        (tier for tier in tiered_pricing if isinstance(tier.get("range"), (list, tuple)) and len(tier["range"]) == 2),
+        key=lambda tier: tier["range"][0],
+    )
     if not valid_tiers:
         return None
 
